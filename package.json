@@ -1,0 +1,27 @@
+{
+  "name": "burgerflame",
+  "version": "1.0.0",
+  "description": "BURGER FLAME — премиальный сайт fast-food кафе с интеграцией Telegram-бота",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
+  "keywords": [
+    "fastfood",
+    "restaurant",
+    "telegram-bot",
+    "ecommerce",
+    "burger-flame"
+  ],
+  "author": "BURGER FLAME",
+  "license": "MIT",
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "dependencies": {
+    "express": "^4.19.2",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5"
+  }
+}
