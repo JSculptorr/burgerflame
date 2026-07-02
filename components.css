@@ -1012,10 +1012,12 @@ a.contacts-card__value:hover { color: var(--accent); }
     display: flex;
     flex-direction: column;
     overflow-y: auto;
+    visibility: hidden;
 }
 
 .mobile-menu.is-open {
     transform: translateX(0);
+    visibility: visible;
 }
 
 .mobile-menu__head {
@@ -1101,10 +1103,12 @@ a.contacts-card__value:hover { color: var(--accent); }
     transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
     display: flex;
     flex-direction: column;
+    visibility: hidden;
 }
 
 .cart-drawer.is-open {
     transform: translateX(0);
+    visibility: visible;
 }
 
 .cart-drawer__head {

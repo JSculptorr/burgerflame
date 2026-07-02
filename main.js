@@ -5,17 +5,18 @@
 
 document.addEventListener('DOMContentLoaded', () => {
 
+    const isCompactScreen = window.matchMedia('(max-width: 640px)').matches;
+
     // ========== ICON INIT ==========
     if (window.lucide) lucide.createIcons();
 
     // ========== AOS ==========
-    if (window.AOS) {
+    if (window.AOS && !isCompactScreen) {
         AOS.init({
             duration: 800,
             easing: 'ease-out-cubic',
             once: true,
-            offset: 60,
-            disable: window.innerWidth < 640 ? 'mobile' : false
+            offset: 60
         });
     }
 
@@ -166,6 +167,24 @@ document.addEventListener('DOMContentLoaded', () => {
     // ========== RENDER PRODUCTS ==========
     const productsGrid = document.getElementById('productsGrid');
 
+    // Keep menu imagery inside the project so mobile browsers do not depend on
+    // a third-party image host. Products without a local file retain their
+    // remote image and receive a local fallback in the card markup.
+    const localProductImages = new Set([
+        'b1', 'b2', 'b3', 'b4',
+        'p1', 'p2', 'p3', 'p4',
+        'd1', 'd2', 'd3',
+        'c1', 'c2', 'c3',
+        'dr1', 'dr2'
+    ]);
+
+    window.PRODUCTS.forEach(product => {
+        product.remoteImage = product.image;
+        if (localProductImages.has(product.id)) {
+            product.image = `assets/images/products/${product.id}.avif`;
+        }
+    });
+
     function productCard(p) {
         const badges = (p.badges || []).map(b => {
             const labels = { hot: '🔥 HOT', new: '✨ NEW', sale: '% SALE', top: '⭐ TOP' };
@@ -177,9 +196,9 @@ document.addEventListener('DOMContentLoaded', () => {
             : '';
 
         return `
-            <article class="product" data-category="${p.category}" data-aos="fade-up">
+            <article class="product" data-category="${p.category}">
                 <div class="product__media">
-                    <img class="product__img" src="${p.image}" alt="${p.name}" loading="lazy">
+                    <img class="product__img" src="${p.image}" alt="${p.name}" loading="lazy" decoding="async" data-fallback="${p.remoteImage}">
                     ${badges ? `<div class="product__badges">${badges}</div>` : ''}
                     <div class="product__rating">
                         <i data-lucide="star"></i>${p.rating || 4.8}
@@ -209,6 +228,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
         productsGrid.innerHTML = filtered.map(productCard).join('');
         if (window.lucide) lucide.createIcons();
+
+        productsGrid.querySelectorAll('.product__img').forEach(img => {
+            img.addEventListener('error', () => {
+                if (img.dataset.fallback && img.src !== img.dataset.fallback) {
+                    img.src = img.dataset.fallback;
+                }
+            }, { once: true });
+        });
 
         // Add to cart click
         productsGrid.querySelectorAll('[data-add]').forEach(btn => {
@@ -253,7 +280,7 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         });
 
-        new Swiper('.bestsellers__swiper', {
+        if (window.Swiper) new Swiper('.bestsellers__swiper', {
             slidesPerView: 1.1,
             spaceBetween: 16,
             navigation: {
@@ -514,7 +541,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // ========== GSAP HERO ANIMATION ==========
-    if (window.gsap) {
+    if (window.gsap && !isCompactScreen) {
         gsap.registerPlugin(ScrollTrigger);
 
         gsap.to('.hero__plate img', {
